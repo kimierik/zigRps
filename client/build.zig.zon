@@ -1,0 +1,16 @@
+.{
+    .name = "client",
+    .version = "0.0.1",
+
+    //.minimum_zig_version = "0.11.0",
+
+    .dependencies = .{
+        .raylib = .{
+            .url = "https://github.com/raysan5/raylib/archive/refs/heads/master.tar.gz",
+            .hash = "1220ecda1d7187536df831a947ab76eecde94d5461de802de63963966d250dcf7e25",
+        },
+    },
+    .paths = .{
+        "",
+    },
+}
