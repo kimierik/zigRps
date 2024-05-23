@@ -1,11 +1,16 @@
 const std = @import("std");
 const print = std.debug.print;
+const gamestate = @import("gamestate.zig");
+const netcode = @import("netcode.zig");
 
-const CHoose = enum {
+//rename to something smarter
+pub const CHoose = enum {
     Rock,
     Paper,
     Cissors,
 };
+
+extern var GAMESTATE: *gamestate.GameState;
 
 pub const GameMessege = union(enum) {
     Choose: CHoose,
@@ -24,9 +29,9 @@ pub const Messeges = union(enum) {
 pub fn parseGameMessege(messege: GameMessege) void {
     switch (messege) {
         GameMessege.Choose => |c| switch (c) {
-            CHoose.Rock => print("Rock\n", .{}),
-            CHoose.Paper => print("Paper\n", .{}),
-            CHoose.Cissors => print("Cissor\n", .{}),
+            CHoose.Rock => _ = netcode.sendMessegeToServer(.{ .PlayMove = CHoose.Rock }) catch unreachable,
+            CHoose.Paper => _ = netcode.sendMessegeToServer(.{ .PlayMove = CHoose.Paper }) catch unreachable,
+            CHoose.Cissors => _ = netcode.sendMessegeToServer(.{ .PlayMove = CHoose.Cissors }) catch unreachable,
         },
         GameMessege.Quit => unreachable,
     }

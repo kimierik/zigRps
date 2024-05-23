@@ -5,6 +5,7 @@ const messege = @import("messeges.zig");
 ///game/appstate
 pub const GameState = struct {
     current_scene: ?*defs.Scene,
+    connection_stream: std.net.Stream,
 
     pub fn setScene(self: *GameState, scene: *defs.Scene) void {
         self.current_scene = scene;
@@ -19,6 +20,8 @@ pub const GameState = struct {
         }
         unreachable;
     }
+    // we need something that accepts messeges to the state itself
+    // like change scene send socket messege etc
 
     ///forwards messeges to current scene
     pub fn forwardMessege(self: *GameState, msg: messege.Messeges) !void {

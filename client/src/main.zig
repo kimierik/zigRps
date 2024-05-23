@@ -4,6 +4,7 @@ const raylib = @cImport({
     @cInclude("raylib.h");
 });
 const gamestatefile = @import("gamestate.zig");
+const netcode = @import("netcode.zig");
 
 const Scene = engineDefs.Scene;
 const Object = engineDefs.Object;
@@ -17,10 +18,17 @@ pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const alloc8r = gpa.allocator();
     defer _ = gpa.deinit();
+
     GAMESTATE = try alloc8r.create(gamestatefile.GameState);
+    defer alloc8r.destroy(GAMESTATE);
+
     GAMESTATE.*.current_scene = null;
 
-    defer alloc8r.destroy(GAMESTATE);
+    const connection = try netcode.connectToServer();
+    GAMESTATE.*.connection_stream = connection;
+    defer connection.close();
+
+    defer _ = netcode.sendMessegeToServer(netcode.ServerMessege.Disconnect) catch unreachable;
 
     raylib.InitWindow(800, 800, "rps client");
     defer raylib.CloseWindow();
