@@ -4,13 +4,12 @@ this project is heavily wip
 
 ## todo
 - server
-    - rooms
-    - thread readers
+    - room browser
+    - room pool
     - mm (eventually)
 
 - client
     - non blocking reads from server (client does not need thread)
-    - handle server messeges
     - winning and losing
     - mainmenu and server selection
 
