@@ -16,7 +16,14 @@ pub const ServerMessege = union(enum) {
 /// returs stream to server
 pub fn connectToServer() !std.net.Stream {
     const addr = try std.net.Address.parseIp4("127.0.0.1", 6565);
-    return try std.net.tcpConnectToAddress(addr);
+
+    const connection = try std.net.tcpConnectToAddress(addr);
+
+    // set nonblock reading
+    const flags = std.c.fcntl(connection.handle, std.os.linux.F.GETFL);
+    _ = std.c.fcntl(connection.handle, std.os.linux.F.SETFL, flags | std.posix.SOCK.NONBLOCK);
+
+    return connection;
 }
 
 ///takes messege from server as input, performs the required actions as a side-effect
@@ -29,11 +36,13 @@ pub fn respondToServerMessege(msg: [2]u8) !void {
         unreachable;
     }
 
+    std.debug.print("messege from server {b}", .{msg[1]});
+
     // what to do with messege
     switch (msg[1]) {
         0b00000000 => sendMessegeToServer(ServerMessege.Pong), // ping
-        0b00100000 => unreachable, //opponent has played a move
-        0b01000000 => unreachable, //opponent msg
+        0b00100000 => std.debug.print("opponent played a move\n", .{}), //opponent has played a move
+        0b01000000...0b01001000 => unreachable, //server status msg
         0b01100000 => unreachable, //game over
         0b10000001...0b1000100 => unreachable, // opponent move revealed
     }
@@ -54,6 +63,7 @@ pub fn sendMessegeToServer(msg: ServerMessege) !void {
     };
 
     const full_messege: [2]u8 = .{ PROTOCOLL_VERSION, msg_Bytes };
+    std.debug.print("sending to server {b}\n", .{msg_Bytes});
 
     _ = try GAMESTATE.connection_stream.write(&full_messege);
 }

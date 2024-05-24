@@ -51,21 +51,21 @@ second byte
 |000|0|0|0|0|0|
 
 
-000
-ping
+000 ping
 
-001
-opponent plays move
+001 opponent plays move
 
-010
-opponent msg
-disconnect
-wait
 
-011
-game over
+010 server status update
+opponent connected                  1
+opponent disconnect                 2
+please wait                         3
+received incorrect messege from you 4
+(0b01000000 | status type)
 
-100 
-opponent move reveal
+
+011 game over
+
+100 opponent move reveal
 
 

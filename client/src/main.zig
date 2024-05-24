@@ -47,6 +47,12 @@ pub fn main() !void {
     while (!raylib.WindowShouldClose()) {
         //input code before drawing start
 
+        var read_buffer: [2]u8 = .{ 0, 0 };
+        const read_bytes = connection.read(&read_buffer) catch 0;
+        if (read_bytes > 0) {
+            std.debug.print("messege from server {b}\n", .{read_buffer[1]});
+        }
+
         if (raylib.IsMouseButtonPressed(raylib.MOUSE_LEFT_BUTTON)) {
             try (GAMESTATE.getScene()).interaction();
         }
